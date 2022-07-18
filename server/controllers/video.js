@@ -91,3 +91,26 @@ export const subs = async (req, res, next) => {
     next(error);
   }
 };
+export const getByTag = async (req, res, next) => {
+  const tags = req.query.tags.split(",");
+  // console.log(tags);
+  try {
+    const videos = await Video.find({ tags: { $in: tags } }).limit(20);
+    res.status(200).json(videos);
+  } catch (error) {
+    next(error);
+  }
+};
+export const search = async (req, res, next) => {
+  // for text search of title we will be using regex properties of mongodb
+  // option is used for Capital and small letter in query
+  const query = req.query.q;
+  try {
+    const videos = await Video.find({
+      title: { $regex: query, $options: "i" },
+    }).limit(40);
+    res.status(200).json(videos);
+  } catch (error) {
+    next(error);
+  }
+};
